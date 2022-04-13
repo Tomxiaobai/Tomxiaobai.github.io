@@ -78,8 +78,7 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
       ，后续某个时间点再一次性将多个操作记录写到 `redo log file `。这种先写日志，再写磁盘的技术就是 `MySQL`
       里经常说到的 `WAL(Write-Ahead Logging) `技术
 
-    * `mysql `支持三种将 `redo log buffer `写入 `redo log file `的时机，可以通过 `
-      innodb_flush_log_at_trx_commit ` 参数配置，各参数值含义如下：
+    * `mysql `支持三种将 `redo log buffer `写入 `redo log file `的时机，可以通过 `innodb_flush_log_at_trx_commit ` 参数配置，各参数值含义如下：
 <center><img src='./assets/img/posts/20210228/image-20211125002228267.png'></center>
 
 Another benefit of doing this is that since I am also learning Python, the experiment brings along good exercise for me.
