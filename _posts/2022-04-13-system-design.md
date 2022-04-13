@@ -6,7 +6,7 @@ title: "system design"
 desc: "常见系统架构的学习和总结"
 date: 2021-03-24
 img: posts/20210324/starting_adventure.jpg
-tags: [general blogging, thoughts, life]
+tags: [system design]
 author: Armando Maynez
 description: "Midlife career change: a disaster or an opportunity?"
 ---
