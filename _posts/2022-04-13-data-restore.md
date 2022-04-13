@@ -12,7 +12,7 @@ github: https://github.com/Tomxiaobai
 ---
 Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，本模块主要是对该三种数据存储做简单的介绍以及总结自己在工作中遇到的问题和基础知识，供自己学习，不用于任何商业化，有一些是博文的内容，仅作为复习用，先感谢各位博主大佬的知识分享。
 
-<center><img src="./assets/img/posts/20210228/mysql_redis_mongo.png"></center>
+<center><img src="./assets/img/posts/20210228/ML_cloud.jpg"></center>
 Let me try to explain; I am in the process of immersing myself into the world of Machine Learning, and to do so, I want to deeply understand the basic concepts and its foundations, and I think that there is no better way to do so than by creating myself all the code for a basic neural network library from scratch. This way I can gain in depth understanding of the math that underpins the ML algorithms.
 
 Another benefit of doing this is that since I am also learning Python, the experiment brings along good exercise for me.
@@ -22,11 +22,12 @@ To call it a Machine Learning Library is perhaps a bit of a stretch, since I jus
 <center><img src="./assets/img/posts/20210228/nnet_flow.gif"></center>
 
 The library started very narrowly, with just the following functionality:
+
 - **create** a neural network based on the following parameters:
-    - number of inputs
-    - size and number of hidden layers
-    - number of outputs
-    - learning rate
+  - number of inputs
+  - size and number of hidden layers
+  - number of outputs
+  - learning rate
 - **forward propagate** or predict the output values when given some inputs
 - **learn** through back propagation using gradient descent
 
@@ -43,6 +44,7 @@ XOR is a logical operation that cannot be solved by a single perceptron because 
 As you can see, when plotted in an X,Y plane, the logical operators AND and OR have a line that can clearly separate the points that are false from the ones that are true, hence a perceptron can easily learn to classify them; however, for XOR there is no single straight line that can do so, therefore a multilayer perceptron is needed for the task.
 
 For the test I created a neural network with my library:
+
 ```python
 import Neural_Network as nn
 
@@ -69,6 +71,7 @@ for n in range(learning_rounds):
 ```
 
 And off we go into training:
+
 ```python
 for data in training_data:
     NN.train(data[:3].reshape(inputs), data[3:].reshape(outputs))
@@ -114,7 +117,6 @@ axs1.plot_surface(x, y, z,
 The end result looks something like this:
 <center><img src="./assets/img/posts/20210228/Surface_XOR.jpg"></center>
 
-
 Then we reshape the z array as a one dimensional array to use it to color the scatter plot:
 
 ```python
@@ -127,6 +129,7 @@ scatter = axs2.scatter(x, y,
                        vmin=0,
                        vmax=1)
 ```
+
 <center><img src="./assets/img/posts/20210228/Final_XOR_Plot.jpg"></center>
 
 To actually see the progress while learning, I created a Matplotlib animation, and it is quite interesting to see as it learns.
