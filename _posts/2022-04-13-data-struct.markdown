@@ -11,7 +11,7 @@ author: TM
 github:  https://github.com/Tomxiaobai
 mathjax: yes
 ---
-As an entry point to learning python and getting into Machine Learning, I decided to code from scratch the Hello World! of the field, a single neuron perceptron.
+As an entry point to learning python and getting into Machine Learning, I decided to code from scratch the Hello World! of the field, a single neuron perceptron. 你好
 
 ## What is a perceptron?
 
