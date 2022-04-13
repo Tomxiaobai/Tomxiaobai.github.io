@@ -2,7 +2,7 @@
 layout: post
 read_time: true
 show_date: true
-title: "Middleware learn"
+title: "Middleware"
 date: 2021-04-20
 img: posts/20210420/post8-rembrandt.jpg
 tags: [kafka, rocketmq, rabbitmq, elasticsearch]

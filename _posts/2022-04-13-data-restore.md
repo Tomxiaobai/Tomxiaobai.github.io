@@ -2,8 +2,8 @@
 layout: post
 read_time: true
 show_date: true
-title:  "data storage" 
-date:   2022-04-13 12:32:20 -0600
+title:  "Data storage" 
+date:   2021-03-12 13:32:20 -0600
 description: 有关数据存储的相关知识点总结、归纳
 img: posts/20210228/MLLibrary.jpg 
 tags: [Mysql, redis, MongoDB]
