@@ -11,7 +11,8 @@ author: TM
 github: https://github.com/Tomxiaobai
 ---
 Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，本模块主要是对该三种数据存储做简单的介绍以及总结自己在工作中遇到的问题和基础知识，供自己学习，不用于任何商业化，有一些是博文的内容，仅作为复习用，先感谢各位博主大佬的知识分享。
-<center><img src="./assets/img/posts/datarestore/mysql_redis_mongo.png" width="480px"></center>
+
+[comment]: <> (<center><img src="./assets/img/posts/datarestore/mysql_redis_mongo.png" width="480px"></center>)
 Let me try to explain; I am in the process of immersing myself into the world of Machine Learning, and to do so, I want to deeply understand the basic concepts and its foundations, and I think that there is no better way to do so than by creating myself all the code for a basic neural network library from scratch. This way I can gain in depth understanding of the math that underpins the ML algorithms.
 
 Another benefit of doing this is that since I am also learning Python, the experiment brings along good exercise for me.
