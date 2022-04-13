@@ -42,7 +42,7 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
 
 * **三大日志**：
 
-  * ==binlog==
+  * **binlog**
 
     * `binlog `用于记录数据库执行的写入性操作(不包括查询)信息，以二进制的形式保存在磁盘中。 `binlog `是 `mysql`的逻辑日志，并且由 `Server `层进行记录，使用任何存储引擎的 `mysql `数据库都会记录 `binlog `日志。
     * **逻辑日志**： 可以简单理解为记录的就是sql语句 。
@@ -61,7 +61,7 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
         - 1：每次 `commit `的时候都要将 `binlog `写入磁盘；
         - N：每N个事务，才会将 `binlog `写入磁盘。
 
-  * ==redo log==
+  * **redo log**
 
     * **只要事务提交成功，那么对数据库做的修改就被永久保存下来了，不可能因为任何原因再回到原来的状态** 。
 
@@ -80,7 +80,7 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
 
     * `mysql `支持三种将 `redo log buffer `写入 `redo log file `的时机，可以通过 `
       innodb_flush_log_at_trx_commit ` 参数配置，各参数值含义如下：
-Let me try to explain; I am in the process of immersing myself into the world of Machine Learning, and to do so, I want to deeply understand the basic concepts and its foundations, and I think that there is no better way to do so than by creating myself all the code for a basic neural network library from scratch. This way I can gain in depth understanding of the math that underpins the ML algorithms.
+<center><img src='./assets/img/posts/20210228/image-20211125002228267.png'></center>
 
 Another benefit of doing this is that since I am also learning Python, the experiment brings along good exercise for me.
 
