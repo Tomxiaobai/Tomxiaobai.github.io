@@ -11,7 +11,7 @@ author: TM
 github:  https://github.com/Tomxiaobai
 mathjax: yes
 ---
-As an entry point to learning python and getting into Machine Learning, I decided to code from scratch the Hello World! of the field, a single neuron perceptron. 你好
+As an entry point to learning python and getting into Machine Learning, I decided to code from scratch the Hello World! of the field, a single neuron perceptron.
 
 ## What is a perceptron?
 
@@ -21,7 +21,7 @@ Back in the late 1950's, a young [Frank Rosenblatt](https://en.wikipedia.org/wik
 
 In its essence, a perceptron is nothing more than a collection of values and rules for passing information through them, but in its simplicity lies its power.
 
-<center><img src='./assets/img/posts/20210125/Perceptron.png'></center>
+<center><img src='./assets/img/posts/20210228/mysql_redis_mongo.png'></center>
 
 Imagine you have a 'neuron' and to 'activate' it, you pass through several input signals, each signal connects to the neuron through a synapse, once the signal is aggregated in the perceptron, it is then passed on to one or as many outputs as defined. A perceptron is but a neuron and its collection of synapses to get a signal into it and to modify a signal to pass on.
 
