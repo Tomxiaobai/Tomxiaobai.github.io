@@ -2,7 +2,7 @@
 layout: post
 read_time: true
 show_date: true
-title:  data storage 
+title:  "data storage" 
 date:   2022-04-13 12:32:20 -0600
 description: 有关数据存储的相关知识点总结、归纳
 img: posts/20210228/MLLibrary.jpg 
