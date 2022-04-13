@@ -65,21 +65,24 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
 
     * **只要事务提交成功，那么对数据库做的修改就被永久保存下来了，不可能因为任何原因再回到原来的状态** 。
 
-    * 那么 `mysql`是如何保证一致性的呢？最简单的做法是在每次事务提交的时候，将该事务涉及修改的数据页全部刷新到磁盘中。但是这么做会有严重的性能问题，主要体现在两个方面：
+    * 那么 **`mysql`**是如何保证一致性的呢？最简单的做法是在每次事务提交的时候，将该事务涉及修改的数据页全部刷新到磁盘中。但是这么做会有严重的性能问题，主要体现在两个方面：
 
-      1. 因为 `Innodb `是以 `页 `为单位进行磁盘交互的，而一个事务很可能只修改一个数据页里面的几个字节，这个时候将完整的数据页刷到磁盘的话，太浪费资源了！
+      1. 因为 **`Innodb `**是以 `页 `为单位进行磁盘交互的，而一个事务很可能只修改一个数据页里面的几个字节，这个时候将完整的数据页刷到磁盘的话，太浪费资源了！
       2. 一个事务可能涉及修改多个数据页，并且这些数据页在物理上并不连续，使用随机IO写入性能太差！
 
-    * 因此 `mysql `设计了 `redo log `， **具体来说就是只记录事务对数据页做了哪些修改**，这样就能完美地解决性能问题了(相对而言文件更小并且是顺序IO)。
+    * 因此 **`mysql `**设计了 **`redo log `**， **具体来说就是只记录事务对数据页做了哪些修改**，这样就能完美地解决性能问题了(相对而言文件更小并且是顺序IO)。
 
-    * `redo log `包括两部分：一个是内存中的日志缓冲( `redo log buffer `)，另一个是磁盘上的日志文件(`redo log file `).
+    * **`redo log `**包括两部分：一个是内存中的日志缓冲( `redo log buffer `)，另一个是磁盘上的日志文件(`redo log file `).
 
     * mysql `每执行一条 `DML `语句，先将记录写入 `redo log buffer `
       ，后续某个时间点再一次性将多个操作记录写到 `redo log file `。这种先写日志，再写磁盘的技术就是 `MySQL`
       里经常说到的 `WAL(Write-Ahead Logging) `技术
 
     * `mysql `支持三种将 `redo log buffer `写入 `redo log file `的时机，可以通过 `innodb_flush_log_at_trx_commit ` 参数配置，各参数值含义如下：
-<center><img src='./assets/img/posts/20210228/image-20211125002228267.png'></center>
+    <center><img src='./assets/img/posts/20210228/image-20211125002228267.png'></center>
+    * `redo log` 实际上记录数据页的变更，而这种变更记录是没必要全部保存，因此 `redo log`
+      实现上采用了大小固定，循环写入的方式，当写到结尾时，会回到开头循环写日志。
+    <center><img src='./assets/img/posts/20210228/image-20211125003912942.png'></center>
 
 Another benefit of doing this is that since I am also learning Python, the experiment brings along good exercise for me.
 
