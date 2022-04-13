@@ -7,8 +7,8 @@ desc: "常见系统架构的学习和总结"
 date: 2021-03-24
 img: posts/20210324/starting_adventure.jpg
 tags: [system design]
-author: Armando Maynez
-description: "Midlife career change: a disaster or an opportunity?"
+author: TM
+description: "系统架构设计"
 ---
 In the midst of a global pandemic caused by the SARS-COV2 coronavirus; I decided to start blogging. I wanted to blog since a long time, I have always enjoyed writing, but many unknowns and having "no time" for it prevented me from taking it up. Things like: "I don't really know who my target audience is", "what would my topic or topics be?", "I don't think I am a world-class expert in anything", and many more kept stopping me from setting up my own blog. Now seemed like a good time as any so with those and tons of other questions in my mind I decided it was time to start.
 

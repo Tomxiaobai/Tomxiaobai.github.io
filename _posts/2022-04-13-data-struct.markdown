@@ -8,7 +8,7 @@ description: Learning data struct makes your hair less.
 img: posts/20210125/Perceptron.jpg 
 tags: [coding, java, c++, go, data struct]
 author: TM
-github:  Tomxiaobai/
+github:  https://github.com/Tomxiaobai
 mathjax: yes
 ---
 As an entry point to learning python and getting into Machine Learning, I decided to code from scratch the Hello World! of the field, a single neuron perceptron.
