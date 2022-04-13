@@ -15,6 +15,71 @@ mathjax: yes
 Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，本模块主要是对该三种数据存储做简单的介绍以及总结自己在工作中遇到的问题和基础知识，供自己学习，不用于任何商业化，有一些是博文的内容，仅作为复习用，先感谢各位博主大佬的知识分享。
 
 <center><img src='./assets/img/posts/20210228/mysql_redis_mongo.png'></center>
+## Mysql
+* 在表结构设计时，主键的设计一定要尽可能地使用顺序值，这样才能保证在海量并发业务场景下的性能。
+
+* 索引是提升查询速度的一种数据结构。
+
+  索引之所以能提升查询速度，在于它在插入时对数据进行了排序（显而易见，它的缺点是影响插入或者更新的性能）。
+
+* InnoDB 存储引擎支持的索引有 B+ 树索引、全文索引、R 树索引
+
+* B+树索引的特点是： 基于磁盘的平衡树，但树非常矮，通常为 3~4 层，能存放千万到上亿的排序数据。树矮意味着访问效率高，从千万或上亿数据里查询一条数据，只用 3、4 次 I/O。
+
+* 需要特别注意的是，在存储时间时，UUID 是根据时间位逆序存储， 也就是低时间低位存放在最前面，高时间位在最后，即 UUID 的前 4 个字节会随着时间的变化而不断“随机”变化，并非单调递增。而非随机值在插入时会产生离散 IO，从而产生性能瓶颈。这也是 UUID 对比自增值最大的弊端。
+
+* 为了解决这个问题，MySQL 8.0 推出了函数 UUID_TO_BIN，它可以把 UUID 字符串：
+
+  通过参数将时间高位放在最前，解决了 UUID 插入时乱序问题；
+
+  去掉了无用的字符串"-"，精简存储空间；
+
+  将字符串其转换为二进制值存储，空间最终从之前的 36 个字节缩短为了 16 字节。
+
+* 而且由于 UUID 能保证全局唯一，因此使用 UUID 的收益远远大于自增ID。可能你已经习惯了用自增做主键，但在海量并发的互联网业务场景下，更推荐 UUID 这样的全局唯一值做主键。
+
+  比如，我特别推荐游戏行业的用户表结构设计，使用 UUID 作为主键，而不是用自增 ID。因为当发生合服操作时，由于 UUID 全局唯一，用户相关数据可直接进行数据的合并，而自增 ID 却需要额外程序整合两个服务器 ID 相同的数据，这个工作是相当巨大且容易出错的。
+
+* **三大日志**：
+
+  * ==binlog==
+
+    * `binlog `用于记录数据库执行的写入性操作(不包括查询)信息，以二进制的形式保存在磁盘中。 `binlog `是 `mysql`的逻辑日志，并且由 `Server `层进行记录，使用任何存储引擎的 `mysql `数据库都会记录 `binlog `日志。
+    * **逻辑日志**： 可以简单理解为记录的就是sql语句 。
+    * **物理日志**： `mysql `数据最终是保存在数据页中的，物理日志记录的就是数据页变更 。
+    * `binlog `是通过追加的方式进行写入的，可以通过 `max_binlog_size `参数设置每个 `binlog`
+      文件的大小，当文件大小达到给定值之后，会生成新的文件来保存日志。
+    * 使用场景：
+      * 在实际应用中， `binlog `的主要使用场景有两个，分别是 **主从复制** 和 **数据恢复** 。
+      * **主从复制** ：在 `Master `端开启 `binlog `，然后将 `binlog `发送到各个 `Slave `端， `Slave `端重放 `binlog `从而达到主从数据一致。
+      * **数据恢复** ：通过使用 `mysqlbinlog `工具来恢复数据。
+
+    * **binlog刷盘时机**
+      * 对于 `InnoDB `存储引擎而言，只有在事务提交时才会记录 `biglog `，此时记录还在内存中，那么 `biglog`
+        是什么时候刷到磁盘中的呢？ `mysql `通过 `sync_binlog `参数控制 `biglog `的刷盘时机，取值范围是 `0-N`
+        - 0：不去强制要求，由系统自行判断何时写入磁盘；
+        - 1：每次 `commit `的时候都要将 `binlog `写入磁盘；
+        - N：每N个事务，才会将 `binlog `写入磁盘。
+
+  * ==redo log==
+
+    * **只要事务提交成功，那么对数据库做的修改就被永久保存下来了，不可能因为任何原因再回到原来的状态** 。
+
+    * 那么 `mysql`是如何保证一致性的呢？最简单的做法是在每次事务提交的时候，将该事务涉及修改的数据页全部刷新到磁盘中。但是这么做会有严重的性能问题，主要体现在两个方面：
+
+      1. 因为 `Innodb `是以 `页 `为单位进行磁盘交互的，而一个事务很可能只修改一个数据页里面的几个字节，这个时候将完整的数据页刷到磁盘的话，太浪费资源了！
+      2. 一个事务可能涉及修改多个数据页，并且这些数据页在物理上并不连续，使用随机IO写入性能太差！
+
+    * 因此 `mysql `设计了 `redo log `， **具体来说就是只记录事务对数据页做了哪些修改**，这样就能完美地解决性能问题了(相对而言文件更小并且是顺序IO)。
+
+    * `redo log `包括两部分：一个是内存中的日志缓冲( `redo log buffer `)，另一个是磁盘上的日志文件(`redo log file `).
+
+    * mysql `每执行一条 `DML `语句，先将记录写入 `redo log buffer `
+      ，后续某个时间点再一次性将多个操作记录写到 `redo log file `。这种先写日志，再写磁盘的技术就是 `MySQL`
+      里经常说到的 `WAL(Write-Ahead Logging) `技术
+
+    * `mysql `支持三种将 `redo log buffer `写入 `redo log file `的时机，可以通过 `
+      innodb_flush_log_at_trx_commit ` 参数配置，各参数值含义如下：
 Let me try to explain; I am in the process of immersing myself into the world of Machine Learning, and to do so, I want to deeply understand the basic concepts and its foundations, and I think that there is no better way to do so than by creating myself all the code for a basic neural network library from scratch. This way I can gain in depth understanding of the math that underpins the ML algorithms.
 
 Another benefit of doing this is that since I am also learning Python, the experiment brings along good exercise for me.
