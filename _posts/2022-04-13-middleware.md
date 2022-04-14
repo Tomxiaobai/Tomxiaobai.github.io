@@ -80,7 +80,7 @@ description: "消息中间件的学习记录"
   
 * Sendfile 零拷贝 、mmap和DMA：
   
-  * 相关链接： [](https://blog.csdn.net/z69183787/article/details/104760890)
+  * 相关链接： [DMA](https://blog.csdn.net/z69183787/article/details/104760890)
   * 总结： DMA利用java nio的相关知识，直接将数据根据socket描述符信息发送至网卡处。
   
-* **相关面试题[](https://developer.aliyun.com/article/740170)**
+* **相关面试题[kafka](https://developer.aliyun.com/article/740170)**
