@@ -97,9 +97,9 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
 
     * MySQL 的慢查询日志记录的内容是：在 MySQL 中响应时间超过参数 **long_query_time**（单位秒，默认值 10）设置的值并且扫描记录数不小于 min_examined_row_limit（默认值0）的语句。
 
-    > NOTE：默认情况下，慢查询日志中不会记录管理语句，如果需要记录的请做如下设置，设置log_slow_admin_statements = on 让管理语句中的慢查询也会记录到慢查询日志中。默认情况下，也不会记录查询时间不超过 long_query_time 但是不使用索引的语句，可通过配置 log_queries_not_using_indexes = on 让不使用索引的 SQL 都被记录到慢查询日志中（即使查询时间没超过 long_query_time 配置的值）。
+  > NOTE：默认情况下，慢查询日志中不会记录管理语句，如果需要记录的请做如下设置，设置log_slow_admin_statements = on 让管理语句中的慢查询也会记录到慢查询日志中。默认情况下，也不会记录查询时间不超过 long_query_time 但是不使用索引的语句，可通过配置 log_queries_not_using_indexes = on 让不使用索引的 SQL 都被记录到慢查询日志中（即使查询时间没超过 long_query_time 配置的值）。
 
-    > NOTE：慢查询query time设置小技巧：线上业务一般建议把 long_query_time 设置为 1 秒，如果某个业务的 MySQL 要求比较高的 QPS，可设置慢查询为 0.1 秒。发现慢查询及时优化或者提醒开发改写。一般测试环境建议 long_query_time 设置的阀值比生产环境的小，比如生产环境是 1 秒，则测试环境建议配置成 0.5 秒。便于在测试环境及时发现一些效率低的 SQL。甚至某些重要业务测试环境 long_query_time 可以设置为 0，以便记录所有语句。并留意慢查询日志的输出，上线前的功能测试完成后，分析慢查询日志每类语句的输出，重点关注 Rows_examined（语句执行期间从存储引擎读取的行数），提前优化。
+  > NOTE：慢查询query time设置小技巧：线上业务一般建议把 long_query_time 设置为 1 秒，如果某个业务的 MySQL 要求比较高的 QPS，可设置慢查询为 0.1 秒。发现慢查询及时优化或者提醒开发改写。一般测试环境建议 long_query_time 设置的阀值比生产环境的小，比如生产环境是 1 秒，则测试环境建议配置成 0.5 秒。便于在测试环境及时发现一些效率低的 SQL。甚至某些重要业务测试环境 long_query_time 可以设置为 0，以便记录所有语句。并留意慢查询日志的输出，上线前的功能测试完成后，分析慢查询日志每类语句的输出，重点关注 Rows_examined（语句执行期间从存储引擎读取的行数），提前优化。
     
   * 通过 explain、show profile 和 trace 等诊断工具来分析慢查询
   
