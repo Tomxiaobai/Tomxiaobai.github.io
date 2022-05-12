@@ -89,6 +89,7 @@ description: "系统架构设计"
   - 原子性
     - 原子性的保证可以通过Redis原生命令、分布式锁以及Lua脚本实现。由于查询库存和扣减库存不同通过一个命令实现，因此，我们只能够通过分布式锁以及Lua脚本实现。
     - Lua脚本Demo
+    
     ```lua
     #获取商品库存信息
     local count = redis.call("MGET", KEYS[1], "total", "ordered");
@@ -104,7 +105,6 @@ description: "系统架构设计"
     return 0;
     ```
     - 分布式锁
-
       1. 客户端向Redis申请分布式锁
       2. 只有拿到锁的客户端才能进行秒杀操作
     
