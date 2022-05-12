@@ -20,7 +20,7 @@ mathjax: yes
 - 和一维前缀和相同，首先定义一个求和数组，其每个元素代表从（0， 0）到 （x, y）的元素总和。可以按照官方题解给出的图进行理解。
 <center><img src='./assets/img/posts/20220414/leetcode_304.png'></center>
 * 因此对应的求(row1, col1, row2, col2)的元素和可以通过下图进行理解。
-<center><img src='.assets/img/posts/20220414/two_matrix.png'></center>
+<center><img src='./assets/img/posts/20220414/two_matrix.png'></center>
 
 示例Demo:
 ```java
