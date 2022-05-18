@@ -361,8 +361,104 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
   - dictEntry的定义：
   <center><img src='./assets/img/posts/20220414/dictEntry.png'></center>
 
- - Hash扩容流程
- 
+ - Hash扩容流程：
+    
+    主要函数：*_dictExpandIfNeeded*, *dictExpand*
+    ```c
+    static int _dictExpandIfNeeded(dict *d)
+    {
+      /* Incremental rehashing already in progress. Return. */
+      if (dictIsRehashing(d)) return DICT_OK;
+
+      /* If the hash table is empty expand it to the initial size. */
+      if (DICTHT_SIZE(d->ht_size_exp[0]) == 0) return dictExpand(d, DICT_HT_INITIAL_SIZE);
+
+      /* If we reached the 1:1 ratio, and we are allowed to resize the hash
+      * table (global setting) or we should avoid it but the ratio between
+      * elements/buckets is over the "safe" threshold, we resize doubling
+      * the number of buckets. */
+      if (d->ht_used[0] >= DICTHT_SIZE(d->ht_size_exp[0]) &&
+          (dict_can_resize ||
+          d->ht_used[0]/ DICTHT_SIZE(d->ht_size_exp[0]) > dict_force_resize_ratio) &&
+          dictTypeExpandAllowed(d))
+      {
+          return dictExpand(d, d->ht_used[0] + 1);
+      }
+      return DICT_OK;
+    }
+    ```
+    从 *_dictExpandIfNeeded* 源码可以看出，hash扩容分为如下情况：
+
+    1.初始化（也可以理解为不是扩容）2.当Hash已经使用的大小大于hash现有大小并且允许扩容 3. 负载因子（ *d->ht_used[0]/ DICTHT_SIZE(d->ht_size_exp[0]* )）的大小大于默认值并且hash类型允许扩容
+
+    *dictExpand* 源码：
+    ```c
+    int _dictExpand(dict *d, unsigned long size, int* malloc_failed)
+    {
+      if (malloc_failed) *malloc_failed = 0;
+
+      /* the size is invalid if it is smaller than the number of
+      * elements already inside the hash table */
+      if (dictIsRehashing(d) || d->ht_used[0] > size)
+          return DICT_ERR;
+
+      /* the new hash table */
+      dictEntry **new_ht_table;
+      unsigned long new_ht_used;
+      signed char new_ht_size_exp = _dictNextExp(size);
+
+      /* Detect overflows */
+      size_t newsize = 1ul<<new_ht_size_exp;
+      if (newsize < size || newsize * sizeof(dictEntry*) < newsize)
+          return DICT_ERR;
+
+      /* Rehashing to the same table size is not useful. */
+      if (new_ht_size_exp == d->ht_size_exp[0]) return DICT_ERR;
+
+      /* Allocate the new hash table and initialize all pointers to NULL */
+      if (malloc_failed) {
+          new_ht_table = ztrycalloc(newsize*sizeof(dictEntry*));
+          *malloc_failed = new_ht_table == NULL;
+          if (*malloc_failed)
+              return DICT_ERR;
+      } else
+          new_ht_table = zcalloc(newsize*sizeof(dictEntry*));
+
+      new_ht_used = 0;
+
+      /* Is this the first initialization? If so it's not really a rehashing
+      * we just set the first hash table so that it can accept keys. */
+      if (d->ht_table[0] == NULL) {
+          d->ht_size_exp[0] = new_ht_size_exp;
+          d->ht_used[0] = new_ht_used;
+          d->ht_table[0] = new_ht_table;
+          return DICT_OK;
+      }
+
+      /* Prepare a second hash table for incremental rehashing */
+      d->ht_size_exp[1] = new_ht_size_exp;
+      d->ht_used[1] = new_ht_used;
+      d->ht_table[1] = new_ht_table;
+      d->rehashidx = 0;
+      return DICT_OK;
+    }
+    ```
+    在 *dictExpand* 中是直接调用的私有函数，从源码可以看到，每次扩容的时候是不停地乘以2直到达到目标大小,因此这个函数里有个计算扩容步伐的重要函数：*_dictNextExp*，同时其中分配内存的操作也是需要重点学习的地方。
+
+    <center><img src='./assets/img/posts/20220414/dict_next_step.png'></center>
+  因此，我们可以做一个主要的函数调用流程图：
+
+  ```mermaid
+  flowchart TB
+  dictAdd & dictReplace & dictAddorFind --> dictAddRaw
+  dictAddRaw --> _dictKeyIndex --> _dictExpandIfNeed
+  dictTypeExpandAllowed -->_dictExpandIfNeed
+  _dictExpandIfNeed --> dictExpand --> _dictExpand --> _dictNextExp
+  ```
+
+
+
+
 
 
 
