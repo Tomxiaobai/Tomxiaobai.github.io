@@ -351,6 +351,18 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
 
       * 和MOVED命令不同，**ASK命令并不会更新客戶端缓存的哈希槽分配信息**。所以，在上图中，如果客戶端再次请求Slot 2中的数据，它还是会给实例2发送请求。这也就是说，ASK命令的作用只是让客戶端能给新实例 发送一次请求，而不像MOVED命令那样，会更改本地缓存，让后续所有命令都发往新实例。
 
+## Redis源码分析
+  ### Hash
+  - HashTable的定义
+  <center><img src='./assets/img/posts/20220414/hash_dict.png'></center>
+
+  - 从HashTable的定义可以看到，其中主要的数据结构包括 *dictEntry* 和 已经使用的大小数量，以及和 *Refresh* 相关的字段。其中两个HashTable也是为了Refresh进行准备的。
+
+  - dictEntry的定义：
+  <center><img src='./assets/img/posts/20220414/dictEntry.png'></center>
+
+ - Hash扩容流程
+ 
 
 
 
