@@ -447,14 +447,7 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
 
     <center><img src='./assets/img/posts/20220414/dict_next_step.png'></center>
   因此，我们可以做一个主要的函数调用流程图：
-
-  ```mermaid
-  flowchart TB
-  dictAdd & dictReplace & dictAddorFind --> dictAddRaw
-  dictAddRaw --> _dictKeyIndex --> _dictExpandIfNeed
-  dictTypeExpandAllowed -->_dictExpandIfNeed
-  _dictExpandIfNeed --> dictExpand --> _dictExpand --> _dictNextExp
-  ```
+    <center><img src='./assets/img/posts/20220414/dict_flow_one.png'></center>
 
 
 
