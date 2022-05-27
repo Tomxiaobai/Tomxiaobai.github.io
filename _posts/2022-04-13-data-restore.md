@@ -490,6 +490,8 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
     return 1;
   }
   ```
+  该函数得调用链路如下：
+   <center><img src='./assets/img/posts/20220414/dict_rehash.png'></center>
 
 
 
