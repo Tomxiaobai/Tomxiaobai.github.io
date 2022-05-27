@@ -449,7 +449,47 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
   因此，我们可以做一个主要的函数调用流程图：
     <center><img src='./assets/img/posts/20220414/dict_flow_one.png'></center>
 
+### ReHash函数介绍
+  dictRehash函数是Redis中时常被用到的函数，因为Redis是单线程的原因，因此在进行扩缩容是Redis是被阻塞住的，这时候其他的命令都是被阻塞的，因此，为了能够避免因为阻塞而影响业务，渐进式ReHash是基础数据结构中的重中之重。这里，主要介绍了rehash函数的步骤。
+  ```cpp
+  int dictRehash(dict *d, int n) {
+    int empty_visits = n * 10; //避免一直是空bucket，导致阻塞
+    if (!dictIsRehashing(d)) return 0;
 
+    while (n -- && d->ht_used[0] != 0) {
+      dictEntry *de, *nextde;
+
+      assert(DICTHT_SIZE(d->ht_size_exp[0]) > (unsigned long)d->rehashidx);
+      while(d->ht_table[0][d->rehashidx] == NULL) { // 找到第一个不为空的bucket，避免一直阻塞
+        d->rehashidx++;
+        if(--empty_visits == 0) return 1; //多次为空则直接返回1
+      }
+      de = d->ht_table[0][d->rehashidx];
+      while(de) { // 解决链式冲突，将同一个bucket下的所有节点rehash到table[1]
+        uint64_t h;
+
+        nextde = de->next;
+        h = dictHashKey(d, de->key) & DICTHT_SIZE_MASK(d->ht_size_exp[1]); // 计算新的hashIndex
+        de->next = d->ht_table[1][h];
+        d->ht_table[1][h] = de;
+        d->ht_used[0]--;
+        d->ht_used[1]--;
+        de = nextde;
+      }
+      d->ht_table[0][d->rehashidx] = NULL; 
+      d->rehashidx++;
+    }
+    if (d->ht_used[0] == 0) {
+      zfree(d->ht_table[0]); //ht_table[0] 和 ht_table[1]替换
+      d->ht_table[0] = d->ht_table[1];
+      d->ht_used[0] = d->ht_used[1];
+      _dictReset(d, 1); //重置ht[1]
+      d->rehashidx = -1;
+      return 0;
+    }
+    return 1;
+  }
+  ```
 
 
 
