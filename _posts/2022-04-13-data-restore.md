@@ -493,6 +493,28 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
   该函数得调用链路如下：
    <center><img src='./assets/img/posts/20220414/dict_rehash.png'></center>
 
+   ### Sorted Set数据结构分析[极客时间--Redis](https://time.geekbang.org/column/intro/100056701)
+   - Zset是由哈希和跳表数据结构实现的，这里主要介绍了跳表的实现方式
+   - 我们先看跳表中的每个节点的定义：
+
+   ```cpp
+   typedef struct zskiplistNode {
+     sds ele; // 保存的元素值
+     double score; // 权重
+     struct zskiplistNode *backward; // 后向指针
+     struct zskiplistLevel {
+        struct zskiplistNode *forward;
+        unsigned long span;
+     }level[];
+     //节点的level数组，保存每层上的前向指针和跨度
+   }zskiplistNode;
+   ```
+  <center><img src='./assets/img/posts/20220414/sorted_set_node.png'></center>
+
+
+
+
+
 
 
 
