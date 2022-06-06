@@ -493,7 +493,7 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
   该函数得调用链路如下：
    <center><img src='./assets/img/posts/20220414/dict_rehash.png'></center>
 
-   ### Sorted Set数据结构分析[极客时间--Redis](https://time.geekbang.org/column/intro/100056701)
+   ### Sorted Set数据结构分析[Redis源码剖析](https://time.geekbang.org/column/intro/100056701)
    - Zset是由哈希和跳表数据结构实现的，这里主要介绍了跳表的实现方式
    - 我们先看跳表中的每个节点的定义：
 
