@@ -84,3 +84,18 @@ description: "消息中间件的学习记录"
   * 总结： DMA利用java nio的相关知识，直接将数据根据socket描述符信息发送至网卡处。
   
 * **相关面试题[kafka](https://developer.aliyun.com/article/740170)**
+
+### Kafka
+
+  - 为什么大部分Kafka都部署在Linux服务器上？
+
+    - I/O性能的差异 （**select vs epoll**）
+    - 网络传输的能力 (**零拷贝技术**)
+  
+  - 磁盘 
+  
+    - kafka数据是顺序存储，因此在选择磁盘上边选择的是机械磁盘
+
+  - 带宽
+    
+    - 带宽的大小影响着每天的数据量，而数据量则影响着Kafka的集群大小，集群大小则影响着机器的数量
