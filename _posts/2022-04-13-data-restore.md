@@ -504,13 +504,96 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
      struct zskiplistNode *backward; // 后向指针
      struct zskiplistLevel {
         struct zskiplistNode *forward;
-        unsigned long span;
+        unsigned long span; //跨度 即step
      }level[];
      //节点的level数组，保存每层上的前向指针和跨度
    }zskiplistNode;
+
+   typedef struct zskiplist {
+    struct zskiplistNode *header, *tail;
+    unsigned long length;
+    int level;
+  } zskiplist;
    ```
   <center><img src='./assets/img/posts/20220414/sorted_set_node.png'></center>
 
+### 跳表的CRUD（**重点**）
+  - 我们初步了解了跳表的每个节点的数据结构，因为跳表能够保证数据的有序性，因此对其的CRUD的分析也至关重要，下面我们主要跳表的增删查改的代码进行学习
+  - *INSERT* (不是很好理解，需要多看几遍)
+
+    首先从插入的第一段分析，跳表在进行插入时首先创建了讲个数组用来维护原先的跳表 *rank* 和 *update*.
+    其中 *rank* 用来维护前驱前驱结点的权重值，*update* 用来维护前驱结点。在第一部分主要是找到插入的地方，
+    第二部分才是真正的进行元素插入，要理解插入的权重是可以重复的，但是插入的元素值是只有一次的。
+
+  ```cpp
+  zskiplistNode *zslInsert(zskiplist *zsl, double score, sds ele) {
+    zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
+    unsigned long rank[ZSKIPLIST_MAXLEVEL]; //维护两个数组
+    int i, level;
+
+    serverAssert(!isnan(score));
+    x = zsl->header;
+    for (i = zsl->level-1; i >= 0; i--) {
+        /* store rank that is crossed to reach the insert position */
+        rank[i] = i == (zsl->level-1) ? 0 : rank[i+1]; // 先判断是否是最顶层
+        // while循环找到需要插入节点的地方
+        while (x->level[i].forward &&
+                (x->level[i].forward->score < score ||
+                    (x->level[i].forward->score == score &&
+                    sdscmp(x->level[i].forward->ele,ele) < 0)))
+        {
+            rank[i] += x->level[i].span;
+            x = x->level[i].forward;
+        }
+        // 更新前驱节点，用来维护插入节点的每层的前驱
+        update[i] = x;
+    }
+    /* we assume the element is not already inside, since we allow duplicated
+     * scores, reinserting the same element should never happen since the
+     * caller of zslInsert() should test in the hash table if the element is
+     * already inside or not. */
+    level = zslRandomLevel(); // 随机生成的层数 概率为25%，越高层插入的概率越低
+
+    // 如果生成的层数大于原有的层数，这时候需要对多出来的层数进行初始化
+    if (level > zsl->level) {
+        for (i = zsl->level; i < level; i++) {
+            rank[i] = 0; 
+            update[i] = zsl->header;
+            update[i]->level[i].span = zsl->length;
+        }
+        zsl->level = level;
+    }
+    x = zslCreateNode(level,score,ele); // 创建新节点
+
+    // 通过维护好的update数组进行链表的创建
+    for (i = 0; i < level; i++) {
+        x->level[i].forward = update[i]->level[i].forward;
+        update[i]->level[i].forward = x;
+
+        /* update span covered by update[i] as x is inserted here */
+        // 重点 重新分配跨度大小
+        x->level[i].span = update[i]->level[i].span - (rank[0] - rank[i]);
+        update[i]->level[i].span = (rank[0] - rank[i]) + 1;
+    }
+
+    /* increment span for untouched levels */
+    // 未没有加入新节点的层数的跨度+1
+    for (i = level; i < zsl->level; i++) {
+        update[i]->level[i].span++;
+    }
+
+    x->backward = (update[0] == zsl->header) ? NULL : update[0];
+    if (x->level[0].forward)
+        x->level[0].forward->backward = x;
+    else
+        zsl->tail = x;
+    zsl->length++;
+    return x;
+  }
+  ```
+  为了能够更加形象的分析该代码，可以看[这里](https://zhuanlan.zhihu.com/p/306183653)的数据结构进行理解。
+  <center><img src='./assets/img/posts/20220414/zsl_node_image.png'></center>
+  
 
 
 
