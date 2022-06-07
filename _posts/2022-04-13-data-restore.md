@@ -592,7 +592,7 @@ Mysql、Redis以及MongoDB都是我们工作中常见的数据存储的工具，
   }
   ```
   为了能够更加形象的分析该代码，可以看[这里](https://zhuanlan.zhihu.com/p/306183653)的数据结构进行理解。
-  <center><img src='./assets/img/posts/20220414/zsl_node_image.png'></center>
+  <center><img src='./assets/img/posts/20220414/zsl_node_image.jpeg'></center>
   
 
 
