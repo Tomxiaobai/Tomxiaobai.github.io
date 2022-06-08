@@ -99,3 +99,34 @@ description: "消息中间件的学习记录"
   - 带宽
     
     - 带宽的大小影响着每天的数据量，而数据量则影响着Kafka的集群大小，集群大小则影响着机器的数量
+  
+  - 重要参数设置
+
+    - Broker参数
+      
+      - max.message.bytes。它决定了 Kafka Broker 能够正常接收该 Topic 的最大消息大小。
+      - 
+
+    - Topic参数（优先级大于Broker参数）
+
+      - retention.ms：规定了该 Topic 消息被保存的时长。默认是 7 天，即该 Topic 只保存最近 7 天的消息。一旦设置了这个值，它会覆盖掉 Broker 端的全局参数值。
+      - retention.bytes：规定了要为该 Topic 预留多大的磁盘空间。和全局参数作用相似，这个值通常在多租户的 Kafka 集群中会有用武之地。当前默认值是 -1，表示可以无限使用磁盘空间。
+      - 例子：需要保存最近半年的交易数据，同时这些数据很大，通常都有几 MB，但一般不会超过 5MB，怎么创建Topic？
+
+        ```java
+        bin/kafka-topics.sh --booststrap-serverlocalhost:9092 --create --topictransaction --partion s1 --replication-factor --config retention.ms=15552000000 --config max.message.bytes=5242880
+        ```
+        修改Topic 级别参数如何修改呢？
+        ```java
+        bin/kafka-configs.sh--zookeeperlocalhost:2181 --entity-typetopics --entity-nametransaction --alter --add -config max.message.bytes=10485760
+        ```
+    - 操作系统参数
+
+      - 文件描述符限制
+      - 文件系统类型
+      - 提交时间
+      - Swappiness
+      
+
+
+      
